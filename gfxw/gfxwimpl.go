@@ -5,15 +5,14 @@ import (
 	"net"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"time"
-
-	"../path"
 )
 
 // var serververzeichnis string = os.Getenv("GOPATH")+"\\src\\gfxw\\gfxwserver\\"
-var path_to_server string = path.Give_Path()
-var serververzeichnis string = (path_to_server + "\\gfxw\\gfxwserver\\")
+//var path_to_server string = path.Give_Path()
+//var serververzeichnis string = (path_to_server + "\\gfxw\\gfxwserver\\")
 
 // const serververzeichnis string = "/home/lewein/go/bin/"
 
@@ -149,7 +148,8 @@ func SetzeServerprotokoll(w bool) {
 
 func Fenster(breite, hoehe uint16) {
 	b, h, p := fmt.Sprint(breite), fmt.Sprint(hoehe), fmt.Sprint(portnummer)
-	prozess, err := start(serververzeichnis+"gfxwserver", b, h, p, zielIP)
+	path, _ := filepath.Abs("gfxw\\gfxwserver\\gfxwserver.exe")
+	prozess, err := start(path, b, h, p, zielIP)
 	if err != nil {
 		fmt.Println(err)
 		panic("Der Gfx-Server konnte so nicht gestartet werden!")

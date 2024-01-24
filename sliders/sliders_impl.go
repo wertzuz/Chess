@@ -4,7 +4,7 @@ import (
 	"math"
 	"strconv"
 
-	gfx "../gfxw"
+	gfx "github.com/ImVulcrum/Chess/gfxw"
 )
 
 type slid struct {

@@ -1,7 +1,7 @@
 package textbox
 
 import (
-	gfx "../gfxw"
+	gfx "github.com/ImVulcrum/Chess/gfxw"
 )
 
 type tbox struct {

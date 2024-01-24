@@ -3,8 +3,7 @@ package pieces
 import (
 	"fmt"
 
-	gfx "../gfxw"
-	"../path"
+	gfx "github.com/ImVulcrum/Chess/gfxw"
 )
 
 type chess_object struct { //datentyp chess_object erbt vom datentyp Positioning
@@ -635,7 +634,7 @@ func (p *chess_object) calc_moves_vertically_and_horizontally(pieces_a [64]Piece
 }
 
 func Copy_Piece_To_Clipboard(piece Piece, w_x, w_y, a uint16) {
-	path := path.Give_Path()
+	path := "../../Chess"
 	gfx.LadeBild(0, 0, (path + "\\resources\\images\\Pieces.bmp")) //load the whole image into the window and cut out the given piece afterwards
 
 	switch piece.(type) {

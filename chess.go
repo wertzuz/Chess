@@ -7,15 +7,15 @@ import (
 	"strconv"
 	"time"
 
-	"./buttons"
-	"./clipboard"
-	gfx "./gfxw"
-	"./imaging"
-	"./parser"
-	"./pieces"
-	"./sliders"
-	"./textbox"
-	"./time_counter"
+	"github.com/ImVulcrum/Chess/buttons"
+	"github.com/ImVulcrum/Chess/clipboard"
+	gfx "github.com/ImVulcrum/Chess/gfxw"
+	"github.com/ImVulcrum/Chess/imaging"
+	"github.com/ImVulcrum/Chess/parser"
+	"github.com/ImVulcrum/Chess/pieces"
+	"github.com/ImVulcrum/Chess/sliders"
+	"github.com/ImVulcrum/Chess/textbox"
+	"github.com/ImVulcrum/Chess/time_counter"
 )
 
 func main() {

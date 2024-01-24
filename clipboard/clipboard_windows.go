@@ -27,7 +27,7 @@ import (
 	"unicode/utf16"
 	"unsafe"
 
-	"./image/bmp"
+	"github.com/ImVulcrum/Chess/clipboard/image/bmp"
 )
 
 func initialize() error { return nil }

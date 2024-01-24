@@ -3,7 +3,7 @@ package buttons
 import (
 	"time"
 
-	gfx "../gfxw"
+	gfx "github.com/ImVulcrum/Chess/gfxw"
 )
 
 type butt struct {

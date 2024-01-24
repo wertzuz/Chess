@@ -9,7 +9,7 @@ import (
 	"time"
 	"unicode"
 
-	"../pieces"
+	"github.com/ImVulcrum/Chess/pieces"
 )
 
 func clean_pgn(input_string string) string { //cleans a given string so that the compiler can read it

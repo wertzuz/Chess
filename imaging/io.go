@@ -14,8 +14,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"./image/bmp"
-	"./image/tiff"
+	"github.com/ImVulcrum/Chess/imaging/image/bmp"
+	"github.com/ImVulcrum/Chess/imaging/image/tiff"
 )
 
 type fileSystem interface {

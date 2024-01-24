@@ -5,7 +5,7 @@
 // Package tiff implements a TIFF image decoder and encoder.
 //
 // The TIFF specification is at http://partners.adobe.com/public/developer/en/tiff/TIFF6.pdf
-package tiff 
+package tiff
 
 import (
 	"compress/zlib"
@@ -17,8 +17,8 @@ import (
 	"io/ioutil"
 	"math"
 
-	"../../image/ccitt"
-	"../../image/tiff/lzw"
+	"github.com/ImVulcrum/Chess/imaging/image/ccitt"
+	"github.com/ImVulcrum/Chess/imaging/image/tiff/lzw"
 )
 
 // A FormatError reports that the input is not a valid TIFF image.
