@@ -44,13 +44,18 @@ func readText() (buf []byte, err error) {
 	if p == 0 {
 		return nil, err
 	}
-	defer gUnlock.Call(hMem)
+	defer func(gUnlock *syscall.LazyProc, a ...uintptr) {
+		_, _, err := gUnlock.Call(a...)
+		if err != nil {
+
+		}
+	}(gUnlock, hMem)
 
 	// Find NUL terminator
 	n := 0
 	for ptr := unsafe.Pointer(p); *(*uint16)(ptr) != 0; n++ {
 		ptr = unsafe.Pointer(uintptr(ptr) +
-			unsafe.Sizeof(*((*uint16)(unsafe.Pointer(p)))))
+			unsafe.Sizeof(*(unsafe.Pointer(p))))
 	}
 
 	var s []uint16
@@ -129,7 +134,7 @@ func readImage() ([]byte, error) {
 
 	var data []byte
 	sh := (*reflect.SliceHeader)(unsafe.Pointer(&data))
-	sh.Data = uintptr(p)
+	sh.Data = p
 	sh.Cap = int(info.Size + 4*uint32(info.Width)*uint32(info.Height))
 	sh.Len = int(info.Size + 4*uint32(info.Width)*uint32(info.Height))
 	img := image.NewRGBA(image.Rect(0, 0, int(info.Width), int(info.Height)))
@@ -144,7 +149,7 @@ func readImage() ([]byte, error) {
 			g := data[idx+1]
 			b := data[idx+0]
 			a := data[idx+3]
-			img.SetRGBA(xhat, yhat, color.RGBA{r, g, b, a})
+			img.SetRGBA(xhat, yhat, color.RGBA{R: r, G: g, B: b, A: a})
 		}
 	}
 	// always use PNG encoding.
@@ -179,7 +184,7 @@ func readImageDib() ([]byte, error) {
 	}
 	buf := new(bytes.Buffer)
 	binary.Write(buf, binary.LittleEndian, uint16('B')|(uint16('M')<<8))
-	binary.Write(buf, binary.LittleEndian, uint32(dataSize))
+	binary.Write(buf, binary.LittleEndian, dataSize)
 	binary.Write(buf, binary.LittleEndian, uint32(0))
 	const sizeof_colorbar = 0
 	binary.Write(buf, binary.LittleEndian, uint32(fileHeaderLen+infoHeaderLen+sizeof_colorbar))

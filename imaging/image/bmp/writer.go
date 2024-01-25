@@ -35,9 +35,9 @@ func encodePaletted(w io.Writer, pix []uint8, dx, dy, stride, step int) error {
 		padding = make([]byte, step-dx)
 	}
 	for y := dy - 1; y >= 0; y-- {
-		min := y*stride + 0
-		max := y*stride + dx
-		if _, err := w.Write(pix[min:max]); err != nil {
+		minVal := y*stride + 0
+		maxVal := y*stride + dx
+		if _, err := w.Write(pix[minVal:maxVal]); err != nil {
 			return err
 		}
 		if padding != nil {
@@ -53,10 +53,10 @@ func encodeRGBA(w io.Writer, pix []uint8, dx, dy, stride, step int, opaque bool)
 	buf := make([]byte, step)
 	if opaque {
 		for y := dy - 1; y >= 0; y-- {
-			min := y*stride + 0
-			max := y*stride + dx*4
+			minVal := y*stride + 0
+			maxVal := y*stride + dx*4
 			off := 0
-			for i := min; i < max; i += 4 {
+			for i := minVal; i < maxVal; i += 4 {
 				buf[off+2] = pix[i+0]
 				buf[off+1] = pix[i+1]
 				buf[off+0] = pix[i+2]
@@ -68,10 +68,10 @@ func encodeRGBA(w io.Writer, pix []uint8, dx, dy, stride, step int, opaque bool)
 		}
 	} else {
 		for y := dy - 1; y >= 0; y-- {
-			min := y*stride + 0
-			max := y*stride + dx*4
+			minVal := y*stride + 0
+			maxVal := y*stride + dx*4
 			off := 0
-			for i := min; i < max; i += 4 {
+			for i := minVal; i < maxVal; i += 4 {
 				a := uint32(pix[i+3])
 				if a == 0 {
 					buf[off+2] = 0
@@ -106,10 +106,10 @@ func encodeNRGBA(w io.Writer, pix []uint8, dx, dy, stride, step int, opaque bool
 	buf := make([]byte, step)
 	if opaque {
 		for y := dy - 1; y >= 0; y-- {
-			min := y*stride + 0
-			max := y*stride + dx*4
+			minVal := y*stride + 0
+			maxVal := y*stride + dx*4
 			off := 0
-			for i := min; i < max; i += 4 {
+			for i := minVal; i < maxVal; i += 4 {
 				buf[off+2] = pix[i+0]
 				buf[off+1] = pix[i+1]
 				buf[off+0] = pix[i+2]
@@ -121,10 +121,10 @@ func encodeNRGBA(w io.Writer, pix []uint8, dx, dy, stride, step int, opaque bool
 		}
 	} else {
 		for y := dy - 1; y >= 0; y-- {
-			min := y*stride + 0
-			max := y*stride + dx*4
+			minVal := y*stride + 0
+			maxVal := y*stride + dx*4
 			off := 0
-			for i := min; i < max; i += 4 {
+			for i := minVal; i < maxVal; i += 4 {
 				buf[off+2] = pix[i+0]
 				buf[off+1] = pix[i+1]
 				buf[off+0] = pix[i+2]

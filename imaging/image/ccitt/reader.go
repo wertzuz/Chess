@@ -363,7 +363,7 @@ func (z *reader) Read(p []byte) (int, error) {
 					z.br.alignToByteBoundary()
 				}
 
-				if err := z.decodeEOL(); err == errMissingEOL {
+				if err := z.decodeEOL(); errors.Is(err, errMissingEOL) {
 					// No-op. It's another row of pixel data.
 				} else if err != nil {
 					z.readErr = err
@@ -461,7 +461,7 @@ func (z *reader) finishDecode(alreadySeenEOL bool) error {
 		// had an explicit image height, we just assume that the trailing two
 		// EOL's were truncated and return a nil error.
 		if err := z.decodeEOL(); err != nil {
-			if (err == errMissingEOL) && !autoDetectHeight {
+			if (errors.Is(err, errMissingEOL)) && !autoDetectHeight {
 				z.truncated = true
 				return nil
 			}
@@ -505,7 +505,7 @@ func (z *reader) decodeRow(finalRow bool) error {
 			}
 		}
 		err := z.decodeEOL()
-		if finalRow && (err == errMissingEOL) {
+		if finalRow && (errors.Is(err, errMissingEOL)) {
 			z.truncated = true
 			return nil
 		}

@@ -14,7 +14,7 @@ func New(width, height int, fillColor color.Color) *image.NRGBA {
 	}
 
 	c := color.NRGBAModel.Convert(fillColor).(color.NRGBA)
-	if (c == color.NRGBA{0, 0, 0, 0}) {
+	if (c == color.NRGBA{}) {
 		return image.NewNRGBA(image.Rect(0, 0, width, height))
 	}
 
@@ -184,7 +184,6 @@ func PasteCenter(background, img image.Image) *image.NRGBA {
 //
 //	// Blend two opaque images of the same size.
 //	dstImage := imaging.Overlay(imageOne, imageTwo, image.Pt(0, 0), 0.5)
-//
 func Overlay(background, img image.Image, pos image.Point, opacity float64) *image.NRGBA {
 	opacity = math.Min(math.Max(opacity, 0.0), 1.0) // Ensure 0.0 <= opacity <= 1.0.
 	dst := Clone(background)
@@ -253,5 +252,5 @@ func OverlayCenter(background, img image.Image, opacity float64) *image.NRGBA {
 	x0 := centerX - img.Bounds().Dx()/2
 	y0 := centerY - img.Bounds().Dy()/2
 
-	return Overlay(background, img, image.Point{x0, y0}, opacity)
+	return Overlay(background, img, image.Point{X: x0, Y: y0}, opacity)
 }

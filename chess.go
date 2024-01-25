@@ -20,18 +20,18 @@ import (
 
 func main() {
 	fmt.Println("start game")
-	var restart_window bool = false //decides if a new window is created on initialize --> false by default so that one window will be created
+	var restart_window = false //decides if a new window is created on initialize --> false by default so that one window will be created
 
 	var deselect_piece_after_clicking = false //decides whether a selected piece should be deselected after executing a second click directly on it
 	var start_window_width uint16 = 600       //the start window is technically scalable but with resolutions higher than 800 graphical bugs are occuring due to the font size implementation of gfx
 	game_timer, friendly_game, duration_of_premove_animation, use_clipboard_as_premoves, name_player_white, name_player_black, a, troll_mode := start_menu(start_window_width / 3 * 2)
 
 restart_marker: //jump marker for the restart
-	var image_location string = set_image_string(troll_mode) //troll mode decides which picture should be used for the pieces, if activated a picture of a cloud will be used
-	var game_history_can_be_changed bool = friendly_game
-	var w_x, w_y uint16 = 10 * a, 8 * a
-	var white_is_current_player bool = false
-	var player_change bool = true
+	var image_location = set_image_string(troll_mode) //troll mode decides which picture should be used for the pieces, if activated a picture of a cloud will be used
+	var game_history_can_be_changed = friendly_game
+	var w_x, w_y = 10 * a, 8 * a
+	var white_is_current_player = false
+	var player_change = true
 	var current_king_index int
 	var current_player_has_no_legal_moves bool
 	var check bool
@@ -42,14 +42,14 @@ restart_marker: //jump marker for the restart
 	var moves_counter int16
 	var current_field [2]uint16
 	var dragging bool
-	var ending_premoves bool = true
+	var ending_premoves = true
 	var piece_is_selected uint16 = 64
-	var premoves string = get_clipboard_if_asked(use_clipboard_as_premoves)
+	var premoves = get_clipboard_if_asked(use_clipboard_as_premoves)
 	var promotion uint16 = 0
 	var move_string string
-	var take string = ""
-	var review_the_game bool = false
-	var end_of_game bool = false
+	var take = ""
+	var review_the_game = false
+	var end_of_game = false
 	m_channel := make(chan [4]int16, 1) //channel gets the latest mouse input, structured as described in the following: button, status, x_cord, y_cord
 	gor_status := make(chan bool, 1)    //needs to be a buffered channel, indicated by the one, otherwise the program will hold until the channel is empty after puting something to it
 
@@ -96,11 +96,11 @@ restart_marker: //jump marker for the restart
 		}
 
 		if len(premoves_array) > 0 { //if there are premoves the program premoves
-			var piece_promoted_to string = ""
+			var piece_promoted_to = ""
 			piece_executing_move, index_of_move, piece_promoting_to := parser.Get_Correct_Move(premoves_array[0], pieces_a, current_king_index) //get the move (so that the enigine can handle it)
 
 			if piece_executing_move != 64 { //if there is no move matching the specifications, this code won't be excuted, instead the premove sequence will end at this point (else statement)
-				var original_pos [2]uint16 = pieces_a[piece_executing_move].Give_Pos() //get the position so that the pgn string can be recreated for the sidebar
+				var original_pos = pieces_a[piece_executing_move].Give_Pos() //get the position so that the pgn string can be recreated for the sidebar
 
 				pieces_a, promotion, take = pieces.Move_Piece_To(pieces_a[piece_executing_move], pieces_a[piece_executing_move].Give_Legal_Moves()[index_of_move], moves_counter, pieces_a)
 				if promotion != 64 {
@@ -235,11 +235,11 @@ func start_menu(start_window_size uint16) (int64, bool, int, bool, string, strin
 	gfx.Fenster(start_window_size/2*3, start_window_size)
 	gfx.Fenstertitel("Chess")
 
-	var bg_color [3]uint8 = [3]uint8{24, 24, 24}
-	var primary_color [3]uint8 = [3]uint8{70, 70, 70}
-	var secondary_color [3]uint8 = [3]uint8{204, 204, 204}
-	var highlight_color1 [3]uint8 = [3]uint8{150, 0, 4}
-	var highlight_color2 [3]uint8 = [3]uint8{0, 94, 4}
+	var bg_color = [3]uint8{24, 24, 24}
+	var primary_color = [3]uint8{70, 70, 70}
+	var secondary_color = [3]uint8{204, 204, 204}
+	var highlight_color1 = [3]uint8{150, 0, 4}
+	var highlight_color2 = [3]uint8{0, 94, 4}
 
 	//background and title
 	gfx.Stiftfarbe(bg_color[0], bg_color[1], bg_color[2])
@@ -311,9 +311,9 @@ func start_menu(start_window_size uint16) (int64, bool, int, bool, string, strin
 				troll_mode.Switch(highlight_color2[0], highlight_color2[1], highlight_color2[2])
 
 			} else if start.Is_Clicked(m_x, m_y) { //extract the parameters from the user control units
-				var game_time int64 = int64(m_time.Get_Value())*60*1000 + int64(s_time.Get_Value())*1000
-				var name_player_white_string string = name_player_white.Get_Text()
-				var name_player_black_string string = name_player_black.Get_Text()
+				var game_time = int64(m_time.Get_Value())*60*1000 + int64(s_time.Get_Value())*1000
+				var name_player_white_string = name_player_white.Get_Text()
+				var name_player_black_string = name_player_black.Get_Text()
 
 				if friendly_game.Give_State() {
 					game_time = 0
@@ -505,9 +505,9 @@ func move_if_current_field_is_in_legal_moves(current_field [2]uint16, pieces_a [
 	for k := 0; k < len(current_legal_moves); k++ { //iterates through the legal moves of the given piece
 		if current_field == [2]uint16{current_legal_moves[k][0], current_legal_moves[k][1]} { //if the correct legal move is found, execute it
 			//moved something
-			var piece_promoting_to string = ""
-			var original_field [2]uint16 = current_piece.Give_Pos()
-			var take string = ""
+			var piece_promoting_to = ""
+			var original_field = current_piece.Give_Pos()
+			var take = ""
 			var promotion uint16
 
 			pieces_a, promotion, take = pieces.Move_Piece_To(current_piece, current_legal_moves[k], moves_counter, pieces_a)
@@ -535,8 +535,8 @@ func get_move_string(current_piece_index int, original_pos [2]uint16, piece_prom
 		return "O-O-O"
 	} else {
 
-		var original_field string = ""
-		var new_field string = parser.Get_Move_As_String_From_Field(pieces_a[current_piece_index].Give_Pos()) //get the current pos (which is the new pos) and translate this to pgn notation
+		var original_field = ""
+		var new_field = parser.Get_Move_As_String_From_Field(pieces_a[current_piece_index].Give_Pos()) //get the current pos (which is the new pos) and translate this to pgn notation
 
 		if piece_promoting != "" { //if the pieces isn't promoting, the piece name is not needed
 			piece_name = ""
@@ -567,7 +567,7 @@ func display_message(message_type uint8, a uint16, white_is_current_player bool)
 	gfx.Vollrechteck(0, 0, a*8, a*8)
 	gfx.Transparenz(50)
 	gfx.Stiftfarbe(8, 8, 8)
-	gfx.Vollrechteck((a), 3*a, 6*a, 2*a)
+	gfx.Vollrechteck(a, 3*a, 6*a, 2*a)
 
 	gfx.Stiftfarbe(220, 220, 220)
 	gfx.SetzeFont("./resources/fonts/junegull.ttf", int(5*a/10))
@@ -622,12 +622,12 @@ func pawn_promotion(w_x, w_y, a uint16, pawn_index int, pieces_a [64]pieces.Piec
 		gfx.Vollrechteck(0, 0, a*8, a*8)
 		gfx.Transparenz(0)
 		gfx.Stiftfarbe(221, 221, 221)
-		gfx.Vollrechteck((2 * a), (4*a)-(5*a)/10, 4*a, a)
+		gfx.Vollrechteck(2*a, (4*a)-(5*a)/10, 4*a, a)
 
-		pieces.Draw_To_Point(queen, w_x, w_y, a, (2 * a), (4*a)-(5*a)/10, 0, 0, 0, 0)
-		pieces.Draw_To_Point(knight, w_x, w_y, a, (3 * a), (4*a)-(5*a)/10, 0, 0, 0, 0)
-		pieces.Draw_To_Point(rook, w_x, w_y, a, (4 * a), (4*a)-(5*a)/10, 0, 0, 0, 0)
-		pieces.Draw_To_Point(bishop, w_x, w_y, a, (5 * a), (4*a)-(5*a)/10, 0, 0, 0, 0)
+		pieces.Draw_To_Point(queen, w_x, w_y, a, 2*a, (4*a)-(5*a)/10, 0, 0, 0, 0)
+		pieces.Draw_To_Point(knight, w_x, w_y, a, 3*a, (4*a)-(5*a)/10, 0, 0, 0, 0)
+		pieces.Draw_To_Point(rook, w_x, w_y, a, 4*a, (4*a)-(5*a)/10, 0, 0, 0, 0)
+		pieces.Draw_To_Point(bishop, w_x, w_y, a, 5*a, (4*a)-(5*a)/10, 0, 0, 0, 0)
 		for { //loop as long as the user hasn't clicked on a piece to promote to
 			mouse_input := <-m_channel
 			if mouse_input[0] == 1 && mouse_input[1] == 1 && uint16(mouse_input[2]) >= 2*a && uint16(mouse_input[2]) <= 6*a && uint16(mouse_input[3]) >= (4*a)-(5*a)/10 && uint16(mouse_input[3]) <= (4*a)+(5*a)/10 {
@@ -708,7 +708,7 @@ func draw_moves_sidebar(a uint16, moves_counter int16, pgn_moves_a []string) {
 
 	for i := moves_counter; moves_counter-i <= display_limit && i != 0; i-- {
 		if i%2 != 0 { //white's move
-			var move_number string = strconv.Itoa(int(i+1) / 2)
+			var move_number = strconv.Itoa(int(i+1) / 2)
 
 			//display move number on every move of white
 			gfx.Stiftfarbe(48, 46, 43)
@@ -767,11 +767,11 @@ func initialize(w_x, w_y, a uint16, restart bool, game_timer int64, name_player_
 	var pgn_moves_a []string
 
 	//init buttons
-	var one_move_back buttons.Button = buttons.New(81*a/10, 7*a+a/10, 8*a/10, a-a/5, "<", 38, 37, 34, 200, 200, 200, (a / 4), int(a/2))
-	var one_move_forward buttons.Button = buttons.New(91*a/10, 7*a+a/10, 8*a/10, a-a/5, ">", 38, 37, 34, 200, 200, 200, (a / 4), int(a/2))
-	var restart_button buttons.Button = buttons.New(8*a+a/7, 62*a/10, 17*a/10, 3*a/10, "restart game", 86, 82, 77, 200, 200, 200, (a / 10), int(a/5))
-	var pause_button buttons.Button = buttons.New(91*a/10, 66*a/10, 8*a/10, 3*a/10, "pause", 86, 82, 77, 200, 200, 200, (a / 15), int(a/5))
-	var save_button buttons.Button = buttons.New(81*a/10, 66*a/10, 8*a/10, 3*a/10, "save", 86, 82, 77, 200, 200, 200, (a / 7), int(a/5))
+	var one_move_back buttons.Button = buttons.New(81*a/10, 7*a+a/10, 8*a/10, a-a/5, "<", 38, 37, 34, 200, 200, 200, a/4, int(a/2))
+	var one_move_forward buttons.Button = buttons.New(91*a/10, 7*a+a/10, 8*a/10, a-a/5, ">", 38, 37, 34, 200, 200, 200, a/4, int(a/2))
+	var restart_button buttons.Button = buttons.New(8*a+a/7, 62*a/10, 17*a/10, 3*a/10, "restart game", 86, 82, 77, 200, 200, 200, a/10, int(a/5))
+	var pause_button buttons.Button = buttons.New(91*a/10, 66*a/10, 8*a/10, 3*a/10, "pause", 86, 82, 77, 200, 200, 200, a/15, int(a/5))
+	var save_button buttons.Button = buttons.New(81*a/10, 66*a/10, 8*a/10, 3*a/10, "save", 86, 82, 77, 200, 200, 200, a/7, int(a/5))
 
 	if !restart { //only create a new window if the game isn't restarted
 		gfx.Fenster(w_x, w_y)
@@ -804,8 +804,8 @@ func initialize(w_x, w_y, a uint16, restart bool, game_timer int64, name_player_
 	draw_background(a)
 
 	var pieces_a [64]pieces.Piece
-	var white_king_index int = -1 //creates an error if the game is started without a white king
-	var black_king_index int = -1 //creates an error if the game is started without a black king
+	var white_king_index = -1 //creates an error if the game is started without a white king
+	var black_king_index = -1 //creates an error if the game is started without a black king
 
 	pieces_a[0] = pieces.NewRook(0, 0, false)
 	pieces_a[1] = pieces.NewKnight(1, 0, false)
@@ -875,8 +875,8 @@ func draw_pieces(pieces_a [64]pieces.Piece, w_x, w_y, a uint16) {
 
 func highlight(a uint16, pos [2]uint16, r, g, b uint8) {
 
-	var cord_x uint16 = a * pos[0]
-	var cord_y uint16 = a * pos[1]
+	var cord_x = a * pos[0]
+	var cord_y = a * pos[1]
 
 	gfx.Transparenz(170)
 	gfx.Stiftfarbe(r, g, b)
@@ -930,8 +930,8 @@ func rescale_image(a uint16, image_location string) {
 	}
 
 	// Specify the desired width and height
-	var width int = 6 * int(a)
-	var height int = 2 * int(a)
+	var width = 6 * int(a)
+	var height = 2 * int(a)
 
 	// Resize the image to the specified dimensions
 	resizedImg := imaging.Resize(img, width, height, imaging.NearestNeighbor)

@@ -1,4 +1,4 @@
-// Autor: (c) St. Schmidt (Kontakt: St.Schmidt@online.de)
+// Package gfxw Autor: (c) St. Schmidt (Kontakt: St.Schmidt@online.de)
 // Datum: 04.02.2019-07.02.2019; letzte Änderung: 19.02.2022
 //
 //	--> Damit entspricht der Stand von gfxw dem von gfx vom 18.02.2022

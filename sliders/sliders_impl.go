@@ -7,7 +7,7 @@ import (
 	gfx "github.com/ImVulcrum/Chess/gfxw"
 )
 
-type slid struct {
+type Slid struct {
 	x               uint16 //(upper left corner)
 	y               uint16 //(upper left corner)
 	x_box_cord      uint16 //(upper left corner of box)
@@ -27,8 +27,8 @@ type slid struct {
 	active          bool
 }
 
-func New(x uint16, y uint16, length uint16, height uint16, thickness uint16, min_value float32, max_value float32, default_value float32, name string, use_int bool, bg_color_s [3]uint8, fg_color_s [3]uint8, bg_color_w [3]uint8) *slid {
-	var s *slid = new(slid)
+func New(x uint16, y uint16, length uint16, height uint16, thickness uint16, min_value float32, max_value float32, default_value float32, name string, use_int bool, bg_color_s [3]uint8, fg_color_s [3]uint8, bg_color_w [3]uint8) *Slid {
+	var s = new(Slid)
 	s.default_value = default_value
 	s.value = s.default_value
 	s.x = x
@@ -55,11 +55,11 @@ func New(x uint16, y uint16, length uint16, height uint16, thickness uint16, min
 	return s
 }
 
-func (s *slid) Draw() {
+func (s *Slid) Draw() {
 	s.draw(false)
 }
 
-func (s *slid) Get_Value() float32 {
+func (s *Slid) Get_Value() float32 {
 	if s.display_int { //round if an int is requested
 		return float32(math.Round(float64(s.value)))
 	} else {
@@ -67,7 +67,7 @@ func (s *slid) Get_Value() float32 {
 	}
 }
 
-func (s *slid) draw(delete bool) {
+func (s *Slid) draw(delete bool) {
 	gfx.SetzeFont("./resources/fonts/unispace.ttf", int(s.height))
 
 	if !delete {
@@ -88,26 +88,26 @@ func (s *slid) draw(delete bool) {
 	}
 }
 
-func (s *slid) Is_Clicked(m_x, m_y uint16) bool { //retuns if the slider is clicked
+func (s *Slid) Is_Clicked(m_x, m_y uint16) bool { //retuns if the slider is clicked
 	if m_x >= s.x && m_x <= s.x+s.length+s.thickness && m_y >= s.y && m_y <= s.y+s.height {
 		return true
 	}
 	return false
 }
 
-func (s *slid) Activate() {
+func (s *Slid) Activate() {
 	s.active = true
 	s.Draw()
 }
 
-func (s *slid) Deactivate() { //sets the active value to false and removes the slider completely
+func (s *Slid) Deactivate() { //sets the active value to false and removes the slider completely
 	s.active = false
 	gfx.Stiftfarbe(s.bg_color_window[0], s.bg_color_window[1], s.bg_color_window[2])
 	gfx.Vollrechteck(s.x, s.y, s.length+s.thickness, s.height)
 	s.draw(true)
 }
 
-func (s *slid) If_Clicked_Draw(m_x, m_y uint16) {
+func (s *Slid) If_Clicked_Draw(m_x, m_y uint16) {
 	if s.active && s.Is_Clicked(m_x, m_y) {
 		s.Redraw(m_x) //if one click is executed on the slider directly
 		for {         //also change the value if the mouse button is pressed and the mouse is not on the slider anymore (for convinience --> almost all sliders in other programs are designed that way)
@@ -121,7 +121,7 @@ func (s *slid) If_Clicked_Draw(m_x, m_y uint16) {
 	}
 }
 
-func (s *slid) Redraw(m_x uint16) {
+func (s *Slid) Redraw(m_x uint16) {
 	gfx.UpdateAus()
 
 	if m_x > s.x+s.length { //if the cord of the mouse is greater than the end of the slider, it's setted to the end

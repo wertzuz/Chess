@@ -4,7 +4,7 @@ import (
 	gfx "github.com/ImVulcrum/Chess/gfxw"
 )
 
-type tbox struct {
+type Tbox struct {
 	x          uint16
 	y          uint16
 	h          uint16
@@ -18,8 +18,8 @@ type tbox struct {
 	used       bool
 }
 
-func New(x uint16, y uint16, h uint16, w uint16, bg [3]uint8, fg [3]uint8, hl [3]uint8, max int, enter_text string) *tbox {
-	var t *tbox = new(tbox)
+func New(x uint16, y uint16, h uint16, w uint16, bg [3]uint8, fg [3]uint8, hl [3]uint8, max int, enter_text string) *Tbox {
+	var t = new(Tbox)
 	t.x = x
 	t.y = y
 	t.h = h
@@ -39,15 +39,15 @@ func New(x uint16, y uint16, h uint16, w uint16, bg [3]uint8, fg [3]uint8, hl [3
 	return t
 }
 
-func (t *tbox) Draw() {
+func (t *Tbox) Draw() {
 	t.draw(false)
 }
 
-func (t *tbox) Was_Used() bool {
+func (t *Tbox) Was_Used() bool {
 	return t.used
 }
 
-func (t *tbox) draw(highlight bool) {
+func (t *Tbox) draw(highlight bool) {
 	if !highlight {
 		gfx.Stiftfarbe(t.bg_color[0], t.bg_color[1], t.bg_color[2])
 	} else {
@@ -66,20 +66,20 @@ func (t *tbox) draw(highlight bool) {
 	gfx.SchreibeFont(t.x+t.h/10, t.y+t.h/15, t.text)
 }
 
-func (t *tbox) Is_Clicked(m_x, m_y uint16) bool { //returns true if a click is executed directly on the slider
+func (t *Tbox) Is_Clicked(m_x, m_y uint16) bool { //returns true if a click is executed directly on the slider
 	if m_x >= t.x && m_x <= t.x+t.w && m_y >= t.y && m_y <= t.y+t.h {
 		return true
 	}
 	return false
 }
 
-func (t *tbox) If_Clicked_Write(m_x, m_y uint16) { //directly move on to the write cycle if the slider was clicked
+func (t *Tbox) If_Clicked_Write(m_x, m_y uint16) { //directly move on to the write cycle if the slider was clicked
 	if t.Is_Clicked(m_x, m_y) {
 		t.Write()
 	}
 }
 
-func (t *tbox) Write() {
+func (t *Tbox) Write() {
 	t.draw(true) //draw because the bg color is supposed to change to the highlight color to indicate that the user is in the write cycle of this box
 
 	if !t.used { //if the box wasn't used it is supposed to clear the enter text so that the user can type
@@ -90,7 +90,7 @@ func (t *tbox) Write() {
 		key, pressed, depth := gfx.TastaturLesen1()
 
 		if pressed == 1 {
-			var text_before string = t.text
+			var text_before = t.text
 
 			if key >= 97 && key <= 122 { //character
 				if key == 122 { //because the gfx package uses an english querty layout, z and y have to be flipped
@@ -135,7 +135,7 @@ func (t *tbox) Write() {
 	}
 }
 
-func (t *tbox) Get_Text() string {
+func (t *Tbox) Get_Text() string {
 	if !t.used {
 		return ""
 	} else {

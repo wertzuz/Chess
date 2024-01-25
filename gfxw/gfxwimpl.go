@@ -16,7 +16,7 @@ import (
 
 // const serververzeichnis string = "/home/lewein/go/bin/"
 
-var zielIP string = "127.0.0.1"
+var zielIP = "127.0.0.1"
 var portnummer uint16 = 55555
 var anfragekanal net.Conn  // für nichtblockierende Anfragen an den Server !!!
 var mauskanal net.Conn     // für ggf. blockierende Mausanfragen an den Server
@@ -42,8 +42,8 @@ func start(args ...string) (p *os.Process, err error) {
 
 func gfxServerAnfrage(anfrage string) string {
 	var laenge int32
-	var b = make([]byte, 1024)     //Lese-Puffer
-	var l []byte = make([]byte, 4) //kodierte Länge der Nachricht
+	var b = make([]byte, 1024) //Lese-Puffer
+	var l = make([]byte, 4)    //kodierte Länge der Nachricht
 	var nachricht []byte
 	var kanal net.Conn
 
@@ -109,8 +109,8 @@ func gfxServerAnfrage(anfrage string) string {
 }
 
 func split(text string) []string {
-	var erg []string = make([]string, 0)
-	var teil string = ""
+	var erg = make([]string, 0)
+	var teil = ""
 	for _, z := range text {
 		if z == ':' {
 			erg = append(erg, teil)
@@ -123,7 +123,7 @@ func split(text string) []string {
 	return erg
 }
 
-// NEUE Funktionen unter Windows
+// GfxPortnummer NEUE Funktionen unter Windows
 func GfxPortnummer() uint16 {
 	return portnummer
 }

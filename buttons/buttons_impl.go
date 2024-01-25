@@ -6,7 +6,7 @@ import (
 	gfx "github.com/ImVulcrum/Chess/gfxw"
 )
 
-type butt struct {
+type Butt struct {
 	x            uint16
 	y            uint16
 	length       uint16
@@ -24,8 +24,8 @@ type butt struct {
 	active       bool
 }
 
-func New(x uint16, y uint16, length uint16, height uint16, name string, re, gr, bl, r_label, g_label, b_label uint8, label_offset uint16, font_size int) *butt {
-	var b *butt = new(butt)
+func New(x uint16, y uint16, length uint16, height uint16, name string, re, gr, bl, r_label, g_label, b_label uint8, label_offset uint16, font_size int) *Butt {
+	var b = new(Butt)
 	b.x = x
 	b.y = y
 	b.length = length
@@ -44,7 +44,7 @@ func New(x uint16, y uint16, length uint16, height uint16, name string, re, gr, 
 	return b
 }
 
-func (b *butt) Draw() {
+func (b *Butt) Draw() {
 	if b.active { //only draw if active
 		gfx.SetzeFont("./resources/fonts/firamono.ttf", b.font_size)
 		gfx.Stiftfarbe(b.r, b.g, b.b)
@@ -54,7 +54,7 @@ func (b *butt) Draw() {
 	}
 }
 
-func (b *butt) Is_Clicked(x, y uint16) bool { //returns true if a click on the button is executed and playes a animation if so
+func (b *Butt) Is_Clicked(x, y uint16) bool { //returns true if a click on the button is executed and playes a animation if so
 	if b.active && x >= b.x && x <= b.x+b.length && y >= b.y && y <= b.y+b.height {
 		gfx.SetzeFont("./resources/fonts/firamono.ttf", b.font_size)
 		gfx.Stiftfarbe(0, 0, 0)
@@ -71,23 +71,23 @@ func (b *butt) Is_Clicked(x, y uint16) bool { //returns true if a click on the b
 	return false
 }
 
-func (b *butt) Give_State() bool {
+func (b *Butt) Give_State() bool {
 	return b.state
 }
 
-func (b *butt) Deactivate() {
+func (b *Butt) Deactivate() {
 	b.active = false
 }
 
-func (b *butt) Activate() {
+func (b *Butt) Activate() {
 	b.active = true
 }
 
-func (b *butt) Is_Active() bool {
+func (b *Butt) Is_Active() bool {
 	return b.active
 }
 
-func (b *butt) Switch(re, gr, bl uint8) bool { //turns the button to a switch (with evervy execution of this function the button state is changed and it's color as well)
+func (b *Butt) Switch(re, gr, bl uint8) bool { //turns the button to a switch (with evervy execution of this function the button state is changed and it's color as well)
 	if b.active && b.state {
 		b.state = false
 		gfx.SetzeFont("./resources/fonts/firamono.ttf", b.font_size)

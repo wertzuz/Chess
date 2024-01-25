@@ -37,7 +37,7 @@ type King struct {
 	chess_object
 }
 
-// general functions (chess_object is inherited by every piece type)
+// Move_To general functions (chess_object is inherited by every piece type)
 func (c *chess_object) Move_To(new_position [2]uint16) {
 	c.position = new_position
 }
@@ -70,7 +70,7 @@ func (c *chess_object) Give_Piece_Type() string { //not needed but required for 
 	return "Error: chess_object is not a valid piece type --> therefore Give_Piece_Type can't be executed"
 }
 
-// deep copy functions need to be written for each pieces individually due to the different data types
+// DeepCopy deep copy functions need to be written for each pieces individually due to the different data types
 func (p *Pawn) DeepCopy(current_piece Piece) Piece {
 	dst := *p
 	return &dst
@@ -79,16 +79,16 @@ func (p *Rook) DeepCopy(current_piece Piece) Piece {
 	dst := *p
 	return &dst
 }
-func (p *Knight) DeepCopy(current_piece Piece) Piece {
-	dst := *p
+func (c *Knight) DeepCopy(current_piece Piece) Piece {
+	dst := *c
 	return &dst
 }
 func (p *King) DeepCopy(current_piece Piece) Piece {
 	dst := *p
 	return &dst
 }
-func (p *Queen) DeepCopy(current_piece Piece) Piece {
-	dst := *p
+func (c *Queen) DeepCopy(current_piece Piece) Piece {
+	dst := *c
 	return &dst
 }
 func (p *Bishop) DeepCopy(current_piece Piece) Piece {
@@ -96,27 +96,27 @@ func (p *Bishop) DeepCopy(current_piece Piece) Piece {
 	return &dst
 }
 
-// give piece type need to be rewritten for each piece. obviously
-func (c *Pawn) Give_Piece_Type() string {
+// Give_Piece_Type give piece type need to be rewritten for each piece. obviously
+func (p *Pawn) Give_Piece_Type() string {
 	return ""
 }
 func (c *Knight) Give_Piece_Type() string {
 	return "N"
 }
-func (c *Bishop) Give_Piece_Type() string {
+func (p *Bishop) Give_Piece_Type() string {
 	return "B"
 }
-func (c *Rook) Give_Piece_Type() string {
+func (p *Rook) Give_Piece_Type() string {
 	return "R"
 }
 func (c *Queen) Give_Piece_Type() string {
 	return "Q"
 }
-func (c *King) Give_Piece_Type() string {
+func (p *King) Give_Piece_Type() string {
 	return "K"
 }
 
-// new functions must be rewritten for each piece type individually as well
+// NewPawn new functions must be rewritten for each piece type individually as well
 func NewPawn(x, y uint16, is_white bool) *Pawn {
 	return &Pawn{
 		chess_object: chess_object{position: [2]uint16{x, y}, white: is_white, has_moved: -1},
@@ -184,7 +184,7 @@ func Draw_To_Point(piece Piece, w_x, w_y, a, x, y uint16, x_offset, y_offset int
 
 func Move_Piece_To(piece Piece, new_position [3]uint16, moves_counter int16, pieces_a [64]Piece) ([64]Piece, uint16, string) { //rook and king has moved change
 	var promotion uint16 = 64
-	var take string = ""
+	var take = ""
 
 	if king, ok := piece.(*King); ok { //king has castle as a special move
 		if new_position[2] == 64 { //normal move
@@ -321,17 +321,17 @@ func (p *Pawn) Calc_Moves(pieces_a [64]Piece, moves_counter int16) {
 	}
 }
 
-func (p *Knight) Calc_Moves(pieces_a [64]Piece, moves_counter int16) {
-	p.Clear_Legal_Moves()
+func (c *Knight) Calc_Moves(pieces_a [64]Piece, moves_counter int16) {
+	c.Clear_Legal_Moves()
 	//calcualte the 8 knight moves
-	p.Calc_Normal_Move(pieces_a, [2]uint16{p.Give_Pos()[0] + 2, p.Give_Pos()[1] + 1})
-	p.Calc_Normal_Move(pieces_a, [2]uint16{p.Give_Pos()[0] + 2, p.Give_Pos()[1] - 1})
-	p.Calc_Normal_Move(pieces_a, [2]uint16{p.Give_Pos()[0] - 2, p.Give_Pos()[1] + 1})
-	p.Calc_Normal_Move(pieces_a, [2]uint16{p.Give_Pos()[0] - 2, p.Give_Pos()[1] - 1})
-	p.Calc_Normal_Move(pieces_a, [2]uint16{p.Give_Pos()[0] + 1, p.Give_Pos()[1] + 2})
-	p.Calc_Normal_Move(pieces_a, [2]uint16{p.Give_Pos()[0] + 1, p.Give_Pos()[1] - 2})
-	p.Calc_Normal_Move(pieces_a, [2]uint16{p.Give_Pos()[0] - 1, p.Give_Pos()[1] + 2})
-	p.Calc_Normal_Move(pieces_a, [2]uint16{p.Give_Pos()[0] - 1, p.Give_Pos()[1] - 2})
+	c.Calc_Normal_Move(pieces_a, [2]uint16{c.Give_Pos()[0] + 2, c.Give_Pos()[1] + 1})
+	c.Calc_Normal_Move(pieces_a, [2]uint16{c.Give_Pos()[0] + 2, c.Give_Pos()[1] - 1})
+	c.Calc_Normal_Move(pieces_a, [2]uint16{c.Give_Pos()[0] - 2, c.Give_Pos()[1] + 1})
+	c.Calc_Normal_Move(pieces_a, [2]uint16{c.Give_Pos()[0] - 2, c.Give_Pos()[1] - 1})
+	c.Calc_Normal_Move(pieces_a, [2]uint16{c.Give_Pos()[0] + 1, c.Give_Pos()[1] + 2})
+	c.Calc_Normal_Move(pieces_a, [2]uint16{c.Give_Pos()[0] + 1, c.Give_Pos()[1] - 2})
+	c.Calc_Normal_Move(pieces_a, [2]uint16{c.Give_Pos()[0] - 1, c.Give_Pos()[1] + 2})
+	c.Calc_Normal_Move(pieces_a, [2]uint16{c.Give_Pos()[0] - 1, c.Give_Pos()[1] - 2})
 }
 
 func (p *Bishop) Calc_Moves(pieces_a [64]Piece, moves_counter int16) {
@@ -344,10 +344,10 @@ func (p *Rook) Calc_Moves(pieces_a [64]Piece, moves_counter int16) {
 	p.calc_moves_vertically_and_horizontally(pieces_a)
 }
 
-func (p *Queen) Calc_Moves(pieces_a [64]Piece, moves_counter int16) {
-	p.Clear_Legal_Moves()
-	p.calc_moves_vertically_and_horizontally(pieces_a)
-	p.calc_moves_diagonally(pieces_a)
+func (c *Queen) Calc_Moves(pieces_a [64]Piece, moves_counter int16) {
+	c.Clear_Legal_Moves()
+	c.calc_moves_vertically_and_horizontally(pieces_a)
+	c.calc_moves_diagonally(pieces_a)
 }
 
 func (p *King) Calc_Moves(pieces_a [64]Piece, moves_counter int16) {
@@ -390,17 +390,17 @@ func (p *King) Calc_Moves(pieces_a [64]Piece, moves_counter int16) {
 
 	if !blocking_right_castle && right_castle_possible != 64 {
 		//p.Append_Legal_Moves([3]uint16{7, p.Give_Pos()[1], uint16(right_castle_possible)})
-		p.Append_Legal_Moves([3]uint16{6, p.Give_Pos()[1], uint16(right_castle_possible)})
+		p.Append_Legal_Moves([3]uint16{6, p.Give_Pos()[1], right_castle_possible})
 	}
 	if !blocking_left_castle && left_castle_possible != 64 {
 		//p.Append_Legal_Moves([3]uint16{0, p.Give_Pos()[1], uint16(left_castle_possible)})
-		p.Append_Legal_Moves([3]uint16{2, p.Give_Pos()[1], uint16(left_castle_possible)})
+		p.Append_Legal_Moves([3]uint16{2, p.Give_Pos()[1], left_castle_possible})
 	}
 }
 
 func (p *King) Is_In_Check(pieces_a [64]Piece, moves_counter int16) bool {
 	//this function is only for the king obviously --> checks if the field, the king is standing on can be captured
-	var field [2]uint16 = p.Give_Pos()
+	var field = p.Give_Pos()
 
 	if Field_Can_Be_Captured(!p.Is_White_Piece(), field, pieces_a, moves_counter) {
 		return true
@@ -422,7 +422,7 @@ func Copy_Array(pieces_a [64]Piece) [64]Piece { //create a deep copy of the give
 func Calc_Moves_With_Check(pieces_a [64]Piece, moves_counter int16, current_king_index int) ([64]Piece, bool) { //calculates the move of all pieces in the pieces array at once
 	//the third step in the moves calculation (Step1: check if the move is mathematically possible, step2: check if the move is possible with no pieces standing in the way, step3: check if the move has no check conflicts)
 	var current_legal_moves [][3]uint16
-	var checkmate bool = true
+	var checkmate = true
 
 	for i := 0; i < len(pieces_a); i++ {
 		if pieces_a[i] != nil && pieces_a[i].Is_White_Piece() == pieces_a[current_king_index].Is_White_Piece() { //calculate the moves for each piece matching the color of the current player
@@ -479,14 +479,14 @@ func (p *Pawn) calc_enpassant(pieces_a [64]Piece, field, en_passant_pawn_pos [2]
 	}
 }
 
-func (p *chess_object) try_to_take(pieces_a [64]Piece, field [2]uint16, piece_is_king_or_pawn bool) {
+func (c *chess_object) try_to_take(pieces_a [64]Piece, field [2]uint16, piece_is_king_or_pawn bool) {
 	for i := 0; i < len(pieces_a); i++ {
 		if pieces_a[i] != nil { //simply check if there is a piece on the given field
-			if pieces_a[i].Is_White_Piece() != p.Is_White_Piece() && pieces_a[i].Give_Pos() == field {
+			if pieces_a[i].Is_White_Piece() != c.Is_White_Piece() && pieces_a[i].Give_Pos() == field {
 				if piece_is_king_or_pawn { //the third element of kings and pawns works diferently as every other piece, therfore, this condition must be checked
-					p.Append_Legal_Moves([3]uint16{field[0], field[1], uint16(i + 66)})
+					c.Append_Legal_Moves([3]uint16{field[0], field[1], uint16(i + 66)})
 				} else {
-					p.Append_Legal_Moves([3]uint16{field[0], field[1], uint16(i)})
+					c.Append_Legal_Moves([3]uint16{field[0], field[1], uint16(i)})
 				}
 
 			}
@@ -494,7 +494,7 @@ func (p *chess_object) try_to_take(pieces_a [64]Piece, field [2]uint16, piece_is
 	}
 }
 
-func (p *chess_object) try_to_move(pieces_a [64]Piece, field [2]uint16, status uint16) {
+func (c *chess_object) try_to_move(pieces_a [64]Piece, field [2]uint16, status uint16) {
 	var blocking_piece bool
 	for i := 0; i < len(pieces_a); i++ {
 		if pieces_a[i] != nil { //if there is a piece on the corresponding square
@@ -505,14 +505,14 @@ func (p *chess_object) try_to_move(pieces_a [64]Piece, field [2]uint16, status u
 		}
 	}
 	if !blocking_piece {
-		p.Append_Legal_Moves([3]uint16{field[0], field[1], status})
+		c.Append_Legal_Moves([3]uint16{field[0], field[1], status})
 	}
 }
 
-func (p *Knight) Calc_Normal_Move(pieces_a [64]Piece, field [2]uint16) {
+func (c *Knight) Calc_Normal_Move(pieces_a [64]Piece, field [2]uint16) {
 	if move_is_in_board(field) {
-		p.try_to_move(pieces_a, field, 64)
-		p.try_to_take(pieces_a, field, false)
+		c.try_to_move(pieces_a, field, 64)
+		c.try_to_take(pieces_a, field, false)
 	}
 }
 
@@ -523,10 +523,10 @@ func (p *King) Calc_Normal_Move(pieces_a [64]Piece, field [2]uint16) {
 	}
 }
 
-func (p *chess_object) check_if_piece_is_blocking(pieces_a [64]Piece, current_pos [2]uint16) bool {
+func (c *chess_object) check_if_piece_is_blocking(pieces_a [64]Piece, current_pos [2]uint16) bool {
 	var blocking_piece Piece
 	var blocking_piece_index uint16
-	var var_break bool = false
+	var var_break = false
 
 	for i := 0; i < len(pieces_a) && blocking_piece == nil; i++ {
 		if pieces_a[i] != nil {
@@ -538,11 +538,11 @@ func (p *chess_object) check_if_piece_is_blocking(pieces_a [64]Piece, current_po
 	}
 
 	if blocking_piece == nil { //es steht nichts im weg
-		p.Append_Legal_Moves([3]uint16{current_pos[0], current_pos[1], 64})
-	} else if blocking_piece.Is_White_Piece() != p.Is_White_Piece() { //es steht etwas im weg, was aber geschlagen werden kann, daher wird danach jedoch gebreaked
-		p.Append_Legal_Moves([3]uint16{current_pos[0], current_pos[1], blocking_piece_index}) //the move will be addded as a take move
+		c.Append_Legal_Moves([3]uint16{current_pos[0], current_pos[1], 64})
+	} else if blocking_piece.Is_White_Piece() != c.Is_White_Piece() { //es steht etwas im weg, was aber geschlagen werden kann, daher wird danach jedoch gebreaked
+		c.Append_Legal_Moves([3]uint16{current_pos[0], current_pos[1], blocking_piece_index}) //the move will be addded as a take move
 		var_break = true
-	} else if blocking_piece.Is_White_Piece() == p.Is_White_Piece() { //es steht etwas im weg, was aber nicht geschlagen werden kann, daher wird sofort gebreaked
+	} else if blocking_piece.Is_White_Piece() == c.Is_White_Piece() { //es steht etwas im weg, was aber nicht geschlagen werden kann, daher wird sofort gebreaked
 		var_break = true
 	} else {
 		fmt.Println("fatal: Error in Calculating Moves Method")
@@ -550,62 +550,62 @@ func (p *chess_object) check_if_piece_is_blocking(pieces_a [64]Piece, current_po
 	return var_break
 }
 
-func (p *chess_object) calc_moves_diagonally(pieces_a [64]Piece) {
-	for new_x, new_y := p.Give_Pos()[0], p.Give_Pos()[1]; new_x < 7 && new_y < 7; { //as long as not out of the board, check diagonal moves (up right)
+func (c *chess_object) calc_moves_diagonally(pieces_a [64]Piece) {
+	for new_x, new_y := c.Give_Pos()[0], c.Give_Pos()[1]; new_x < 7 && new_y < 7; { //as long as not out of the board, check diagonal moves (up right)
 		new_x++
 		new_y++
-		var current_pos [2]uint16 = [2]uint16{new_x, new_y}
+		var current_pos = [2]uint16{new_x, new_y}
 
-		if p.check_if_piece_is_blocking(pieces_a, current_pos) {
+		if c.check_if_piece_is_blocking(pieces_a, current_pos) {
 			break
 		}
 	}
 
-	for new_x, new_y := p.Give_Pos()[0], p.Give_Pos()[1]; new_x < 7 && new_y != 0; { //as long as not out of the board, check diagonal moves (down right)
+	for new_x, new_y := c.Give_Pos()[0], c.Give_Pos()[1]; new_x < 7 && new_y != 0; { //as long as not out of the board, check diagonal moves (down right)
 		new_x++
 		new_y--
-		var current_pos [2]uint16 = [2]uint16{new_x, new_y}
+		var current_pos = [2]uint16{new_x, new_y}
 
-		if p.check_if_piece_is_blocking(pieces_a, current_pos) {
+		if c.check_if_piece_is_blocking(pieces_a, current_pos) {
 			break
 		}
 	}
 
-	for new_x, new_y := p.Give_Pos()[0], p.Give_Pos()[1]; new_x != 0 && new_y < 7; { //as long as not out of the board, check diagonal moves (up left)
+	for new_x, new_y := c.Give_Pos()[0], c.Give_Pos()[1]; new_x != 0 && new_y < 7; { //as long as not out of the board, check diagonal moves (up left)
 		new_x--
 		new_y++
-		var current_pos [2]uint16 = [2]uint16{new_x, new_y}
+		var current_pos = [2]uint16{new_x, new_y}
 
-		if p.check_if_piece_is_blocking(pieces_a, current_pos) {
+		if c.check_if_piece_is_blocking(pieces_a, current_pos) {
 			break
 		}
 	}
 
-	for new_x, new_y := p.Give_Pos()[0], p.Give_Pos()[1]; new_x != 0 && new_y != 0; { //as long as not out of the board, check diagonal moves (down left)
+	for new_x, new_y := c.Give_Pos()[0], c.Give_Pos()[1]; new_x != 0 && new_y != 0; { //as long as not out of the board, check diagonal moves (down left)
 		new_x--
 		new_y--
-		var current_pos [2]uint16 = [2]uint16{new_x, new_y}
+		var current_pos = [2]uint16{new_x, new_y}
 
-		if p.check_if_piece_is_blocking(pieces_a, current_pos) {
+		if c.check_if_piece_is_blocking(pieces_a, current_pos) {
 			break
 		}
 	}
 }
 
-func (p *chess_object) calc_moves_vertically_and_horizontally(pieces_a [64]Piece) {
-	for new_x := p.Give_Pos()[0]; new_x < 7; { //as long as not out of the board, check vertical moves (up)
+func (c *chess_object) calc_moves_vertically_and_horizontally(pieces_a [64]Piece) {
+	for new_x := c.Give_Pos()[0]; new_x < 7; { //as long as not out of the board, check vertical moves (up)
 		new_x++
-		var current_pos [2]uint16 = [2]uint16{new_x, p.Give_Pos()[1]}
+		var current_pos = [2]uint16{new_x, c.Give_Pos()[1]}
 
-		if p.check_if_piece_is_blocking(pieces_a, current_pos) {
+		if c.check_if_piece_is_blocking(pieces_a, current_pos) {
 			break
 		}
 	}
 
-	for new_x := p.Give_Pos()[0]; new_x != 0; { //as long as not out of the board, check vertical moves (down)
+	for new_x := c.Give_Pos()[0]; new_x != 0; { //as long as not out of the board, check vertical moves (down)
 		new_x--
-		var current_pos [2]uint16 = [2]uint16{new_x, p.Give_Pos()[1]}
-		if p.check_if_piece_is_blocking(pieces_a, current_pos) {
+		var current_pos = [2]uint16{new_x, c.Give_Pos()[1]}
+		if c.check_if_piece_is_blocking(pieces_a, current_pos) {
 			break
 		}
 		if new_x == 0 {
@@ -613,18 +613,18 @@ func (p *chess_object) calc_moves_vertically_and_horizontally(pieces_a [64]Piece
 		}
 	}
 
-	for new_y := p.Give_Pos()[1]; new_y < 7; { //as long as not out of the board, check horzontal moves (right)
+	for new_y := c.Give_Pos()[1]; new_y < 7; { //as long as not out of the board, check horzontal moves (right)
 		new_y++
-		var current_pos [2]uint16 = [2]uint16{p.Give_Pos()[0], new_y}
-		if p.check_if_piece_is_blocking(pieces_a, current_pos) {
+		var current_pos = [2]uint16{c.Give_Pos()[0], new_y}
+		if c.check_if_piece_is_blocking(pieces_a, current_pos) {
 			break
 		}
 	}
 
-	for new_y := p.Give_Pos()[1]; new_y != 0; { //as long as not out of the board, check horzontal moves (left)
+	for new_y := c.Give_Pos()[1]; new_y != 0; { //as long as not out of the board, check horzontal moves (left)
 		new_y--
-		var current_pos [2]uint16 = [2]uint16{p.Give_Pos()[0], new_y}
-		if p.check_if_piece_is_blocking(pieces_a, current_pos) {
+		var current_pos = [2]uint16{c.Give_Pos()[0], new_y}
+		if c.check_if_piece_is_blocking(pieces_a, current_pos) {
 			break
 		}
 		if new_y == 0 {
@@ -635,7 +635,7 @@ func (p *chess_object) calc_moves_vertically_and_horizontally(pieces_a [64]Piece
 
 func Copy_Piece_To_Clipboard(piece Piece, w_x, w_y, a uint16) {
 	path := "../../Chess"
-	gfx.LadeBild(0, 0, (path + "\\resources\\images\\Pieces.bmp")) //load the whole image into the window and cut out the given piece afterwards
+	gfx.LadeBild(0, 0, path+"\\resources\\images\\Pieces.bmp") //load the whole image into the window and cut out the given piece afterwards
 
 	switch piece.(type) {
 	case *Pawn:

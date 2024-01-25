@@ -144,6 +144,8 @@ func (c CompressionType) specValue() uint32 {
 		return cG3
 	case CCITTGroup4:
 		return cG4
+	default:
+		panic("unhandled default case")
 	}
 	return cNone
 }

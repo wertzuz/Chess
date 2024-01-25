@@ -27,7 +27,7 @@ var enc = binary.LittleEndian
 
 // An ifdEntry is a single entry in an Image File Directory.
 // A value of type dtRational is composed of two 32-bit values,
-// thus data contains two uints (numerator and denominator) for a single number.
+// thus data contains two uints (numerator and denominValator) for a single number.
 type ifdEntry struct {
 	tag      int
 	datatype int
@@ -44,7 +44,7 @@ func (e ifdEntry) putData(p []byte) {
 			enc.PutUint16(p, uint16(d))
 			p = p[2:]
 		case dtLong, dtRational:
-			enc.PutUint32(p, uint32(d))
+			enc.PutUint32(p, d)
 			p = p[4:]
 		}
 	}
@@ -62,11 +62,11 @@ func encodeGray(w io.Writer, pix []uint8, dx, dy, stride int, predictor bool) er
 	}
 	buf := make([]byte, dx)
 	for y := 0; y < dy; y++ {
-		min := y*stride + 0
-		max := y*stride + dx
+		minVal := y*stride + 0
+		maxVal := y*stride + dx
 		off := 0
 		var v0 uint8
-		for i := min; i < max; i++ {
+		for i := minVal; i < maxVal; i++ {
 			v1 := pix[i]
 			buf[off] = v1 - v0
 			v0 = v1
@@ -82,11 +82,11 @@ func encodeGray(w io.Writer, pix []uint8, dx, dy, stride int, predictor bool) er
 func encodeGray16(w io.Writer, pix []uint8, dx, dy, stride int, predictor bool) error {
 	buf := make([]byte, dx*2)
 	for y := 0; y < dy; y++ {
-		min := y*stride + 0
-		max := y*stride + dx*2
+		minVal := y*stride + 0
+		maxVal := y*stride + dx*2
 		off := 0
 		var v0 uint16
-		for i := min; i < max; i += 2 {
+		for i := minVal; i < maxVal; i += 2 {
 			// An image.Gray16's Pix is in big-endian order.
 			v1 := uint16(pix[i])<<8 | uint16(pix[i+1])
 			if predictor {
@@ -110,11 +110,11 @@ func encodeRGBA(w io.Writer, pix []uint8, dx, dy, stride int, predictor bool) er
 	}
 	buf := make([]byte, dx*4)
 	for y := 0; y < dy; y++ {
-		min := y*stride + 0
-		max := y*stride + dx*4
+		minVal := y*stride + 0
+		maxVal := y*stride + dx*4
 		off := 0
 		var r0, g0, b0, a0 uint8
-		for i := min; i < max; i += 4 {
+		for i := minVal; i < maxVal; i += 4 {
 			r1, g1, b1, a1 := pix[i+0], pix[i+1], pix[i+2], pix[i+3]
 			buf[off+0] = r1 - r0
 			buf[off+1] = g1 - g0
@@ -133,11 +133,11 @@ func encodeRGBA(w io.Writer, pix []uint8, dx, dy, stride int, predictor bool) er
 func encodeRGBA64(w io.Writer, pix []uint8, dx, dy, stride int, predictor bool) error {
 	buf := make([]byte, dx*8)
 	for y := 0; y < dy; y++ {
-		min := y*stride + 0
-		max := y*stride + dx*8
+		minVal := y*stride + 0
+		maxVal := y*stride + dx*8
 		off := 0
 		var r0, g0, b0, a0 uint16
-		for i := min; i < max; i += 8 {
+		for i := minVal; i < maxVal; i += 8 {
 			// An image.RGBA64's Pix is in big-endian order.
 			r1 := uint16(pix[i+0])<<8 | uint16(pix[i+1])
 			g1 := uint16(pix[i+2])<<8 | uint16(pix[i+3])
@@ -278,7 +278,7 @@ func writeIFD(w io.Writer, ifdOffset int, d []ifdEntry) error {
 type Options struct {
 	// Compression is the type of compression used.
 	Compression CompressionType
-	// Predictor determines whether a differencing predictor is used;
+	// Predictor determinVales whether a differencing predictor is used;
 	// if true, instead of each pixel's color, the color difference to the
 	// preceding one is saved. This improves the compression for certain
 	// types of images and compressors. For example, it works well for
@@ -286,7 +286,7 @@ type Options struct {
 	Predictor bool
 }
 
-// Encode writes the image m to w. opt determines the options used for
+// Encode writes the image m to w. opt determinVales the options used for
 // encoding, such as the compression type. If opt is nil, an uncompressed
 // image is written.
 func Encode(w io.Writer, m image.Image, opt *Options) error {
@@ -348,7 +348,7 @@ func Encode(w io.Writer, m image.Image, opt *Options) error {
 	samplesPerPixel := uint32(4)
 	bitsPerSample := []uint32{8, 8, 8, 8}
 	extraSamples := uint32(0)
-	colorMap := []uint32{}
+	var colorMap []uint32
 
 	if predictor {
 		pr = prHorizontal
@@ -361,9 +361,9 @@ func Encode(w io.Writer, m image.Image, opt *Options) error {
 		colorMap = make([]uint32, 256*3)
 		for i := 0; i < 256 && i < len(m.Palette); i++ {
 			r, g, b, _ := m.Palette[i].RGBA()
-			colorMap[i+0*256] = uint32(r)
-			colorMap[i+1*256] = uint32(g)
-			colorMap[i+2*256] = uint32(b)
+			colorMap[i+0*256] = r
+			colorMap[i+1*256] = g
+			colorMap[i+2*256] = b
 		}
 		err = encodeGray(dst, m.Pix, d.X, d.Y, m.Stride, predictor)
 	case *image.Gray:

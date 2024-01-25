@@ -203,7 +203,7 @@ func decodeConfig(r io.Reader) (config image.Config, bitsPerPixel int, topDown b
 		for i := range pcm {
 			// BMP images are stored in BGR order rather than RGB order.
 			// Every 4th byte is padding.
-			pcm[i] = color.RGBA{b[4*i+2], b[4*i+1], b[4*i+0], 0xFF}
+			pcm[i] = color.RGBA{R: b[4*i+2], G: b[4*i+1], B: b[4*i+0], A: 0xFF}
 		}
 		return image.Config{ColorModel: pcm, Width: width, Height: height}, 8, topDown, false, nil
 	case 24:

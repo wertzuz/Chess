@@ -14,7 +14,6 @@ import (
 	"image"
 	"image/color"
 	"io"
-	"io/ioutil"
 	"math"
 
 	"github.com/ImVulcrum/Chess/imaging/image/ccitt"
@@ -196,10 +195,10 @@ func (d *decoder) parseIFD(p []byte) (int, error) {
 		d.palette = make([]color.Color, numcolors)
 		for i := 0; i < numcolors; i++ {
 			d.palette[i] = color.RGBA64{
-				uint16(val[i]),
-				uint16(val[i+numcolors]),
-				uint16(val[i+2*numcolors]),
-				0xffff,
+				R: uint16(val[i]),
+				G: uint16(val[i+numcolors]),
+				B: uint16(val[i+2*numcolors]),
+				A: 0xffff,
 			}
 		}
 	case tSampleFormat:
@@ -311,7 +310,7 @@ func (d *decoder) decode(dst image.Image, xmin, ymin, xmax, ymax int) error {
 					if d.mode == mGrayInvert {
 						v = 0xffff - v
 					}
-					img.SetGray16(x, y, color.Gray16{v})
+					img.SetGray16(x, y, color.Gray16{Y: v})
 				}
 				if rMaxX == img.Bounds().Max.X {
 					d.off += 2 * (xmax - img.Bounds().Max.X)
@@ -319,18 +318,18 @@ func (d *decoder) decode(dst image.Image, xmin, ymin, xmax, ymax int) error {
 			}
 		} else {
 			img := dst.(*image.Gray)
-			max := uint32((1 << d.bpp) - 1)
+			maxVal := uint32((1 << d.bpp) - 1)
 			for y := ymin; y < rMaxY; y++ {
 				for x := xmin; x < rMaxX; x++ {
 					v, ok := d.readBits(d.bpp)
 					if !ok {
 						return errNoPixels
 					}
-					v = v * 0xff / max
+					v = v * 0xff / maxVal
 					if d.mode == mGrayInvert {
 						v = 0xff - v
 					}
-					img.SetGray(x, y, color.Gray{uint8(v)})
+					img.SetGray(x, y, color.Gray{Y: uint8(v)})
 				}
 				d.flushBits()
 			}
@@ -359,16 +358,16 @@ func (d *decoder) decode(dst image.Image, xmin, ymin, xmax, ymax int) error {
 					g := d.byteOrder.Uint16(d.buf[d.off+2 : d.off+4])
 					b := d.byteOrder.Uint16(d.buf[d.off+4 : d.off+6])
 					d.off += 6
-					img.SetRGBA64(x, y, color.RGBA64{r, g, b, 0xffff})
+					img.SetRGBA64(x, y, color.RGBA64{R: r, G: g, B: b, A: 0xffff})
 				}
 			}
 		} else {
 			img := dst.(*image.RGBA)
 			for y := ymin; y < rMaxY; y++ {
-				min := img.PixOffset(xmin, y)
-				max := img.PixOffset(rMaxX, y)
+				minVal := img.PixOffset(xmin, y)
+				maxVal := img.PixOffset(rMaxX, y)
 				off := (y - ymin) * (xmax - xmin) * 3
-				for i := min; i < max; i += 4 {
+				for i := minVal; i < maxVal; i += 4 {
 					if off+3 > len(d.buf) {
 						return errNoPixels
 					}
@@ -393,19 +392,19 @@ func (d *decoder) decode(dst image.Image, xmin, ymin, xmax, ymax int) error {
 					b := d.byteOrder.Uint16(d.buf[d.off+4 : d.off+6])
 					a := d.byteOrder.Uint16(d.buf[d.off+6 : d.off+8])
 					d.off += 8
-					img.SetNRGBA64(x, y, color.NRGBA64{r, g, b, a})
+					img.SetNRGBA64(x, y, color.NRGBA64{R: r, G: g, B: b, A: a})
 				}
 			}
 		} else {
 			img := dst.(*image.NRGBA)
 			for y := ymin; y < rMaxY; y++ {
-				min := img.PixOffset(xmin, y)
-				max := img.PixOffset(rMaxX, y)
+				minVal := img.PixOffset(xmin, y)
+				maxVal := img.PixOffset(rMaxX, y)
 				i0, i1 := (y-ymin)*(xmax-xmin)*4, (y-ymin+1)*(xmax-xmin)*4
 				if i1 > len(d.buf) {
 					return errNoPixels
 				}
-				copy(img.Pix[min:max], d.buf[i0:i1])
+				copy(img.Pix[minVal:maxVal], d.buf[i0:i1])
 			}
 		}
 	case mRGBA:
@@ -421,19 +420,19 @@ func (d *decoder) decode(dst image.Image, xmin, ymin, xmax, ymax int) error {
 					b := d.byteOrder.Uint16(d.buf[d.off+4 : d.off+6])
 					a := d.byteOrder.Uint16(d.buf[d.off+6 : d.off+8])
 					d.off += 8
-					img.SetRGBA64(x, y, color.RGBA64{r, g, b, a})
+					img.SetRGBA64(x, y, color.RGBA64{R: r, G: g, B: b, A: a})
 				}
 			}
 		} else {
 			img := dst.(*image.RGBA)
 			for y := ymin; y < rMaxY; y++ {
-				min := img.PixOffset(xmin, y)
-				max := img.PixOffset(rMaxX, y)
+				minVal := img.PixOffset(xmin, y)
+				maxVal := img.PixOffset(rMaxX, y)
 				i0, i1 := (y-ymin)*(xmax-xmin)*4, (y-ymin+1)*(xmax-xmin)*4
 				if i1 > len(d.buf) {
 					return errNoPixels
 				}
-				copy(img.Pix[min:max], d.buf[i0:i1])
+				copy(img.Pix[minVal:maxVal], d.buf[i0:i1])
 			}
 		}
 	}
@@ -708,15 +707,15 @@ func Decode(r io.Reader) (img image.Image, err error) {
 				inv := d.firstVal(tPhotometricInterpretation) == pWhiteIsZero
 				order := ccittFillOrder(d.firstVal(tFillOrder))
 				r := ccitt.NewReader(io.NewSectionReader(d.r, offset, n), order, ccitt.Group3, blkW, blkH, &ccitt.Options{Invert: inv, Align: false})
-				d.buf, err = ioutil.ReadAll(r)
+				d.buf, err = io.ReadAll(r)
 			case cG4:
 				inv := d.firstVal(tPhotometricInterpretation) == pWhiteIsZero
 				order := ccittFillOrder(d.firstVal(tFillOrder))
 				r := ccitt.NewReader(io.NewSectionReader(d.r, offset, n), order, ccitt.Group4, blkW, blkH, &ccitt.Options{Invert: inv, Align: false})
-				d.buf, err = ioutil.ReadAll(r)
+				d.buf, err = io.ReadAll(r)
 			case cLZW:
 				r := lzw.NewReader(io.NewSectionReader(d.r, offset, n), lzw.MSB, 8)
-				d.buf, err = ioutil.ReadAll(r)
+				d.buf, err = io.ReadAll(r)
 				r.Close()
 			case cDeflate, cDeflateOld:
 				var r io.ReadCloser
@@ -724,7 +723,7 @@ func Decode(r io.Reader) (img image.Image, err error) {
 				if err != nil {
 					return nil, err
 				}
-				d.buf, err = ioutil.ReadAll(r)
+				d.buf, err = io.ReadAll(r)
 				r.Close()
 			case cPackBits:
 				d.buf, err = unpackBits(io.NewSectionReader(d.r, offset, n))
